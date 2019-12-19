@@ -27,6 +27,10 @@ if s > 0:
         cyclesOfSessions.append(x)
         totalCycles += cyclesOfSessions[i]
     print("Total number of cycles per day = " + str(totalCycles))
+    if totalCycles <= 0:
+        print("Error: The total cycles count in a day should be more than 0, "
+              "hence, the total number of cycles is now edited to be '1'")
+        totalCycles = 1
 
     for p in range(0, s):
         startHours = int(input("Enter G[" + str(p+1) + "].start.hours: \n "))
@@ -64,7 +68,7 @@ if s > 0:
         print("G[" + str(p+1) + "].time = " + str(timesOfSessions[p]) + " seconds")
         distancesOfSessions.append((hoursDifference * 3600 + minutesDifference * 60) * 465.1)
         print("G[" + str(p+1) + "].distance = " + str(distancesOfSessions[p]) + " meters")
-        anglesOfSessions.append(math.degrees((((hoursDifference * 3600 + minutesDifference * 60) * 465.1) /6371000)/2))
+        anglesOfSessions.append(math.degrees((((hoursDifference * 3600 + minutesDifference * 60) * 465.1) / 6371000)/2))
         print("G[" + str(p+1) + "].angle = " + str(anglesOfSessions[p]))
 
         startBearing = (startHours * 60 + startMinutes) * 0.25
@@ -77,19 +81,25 @@ if s > 0:
         else:
             directionsOfSessions.append(math.radians(startBearing+((endBearing-startBearing)/2)))
         print("The Bearing of session number " + str(p + 1) + " is " + str(directionsOfSessions[p]) + " rad")
-        print("G[" + str(p + 1) + "].VerticalComponent = " + str((cyclesOfSessions[p] / totalCycles) * math.sin(directionsOfSessions[p])))
-        print("G[" + str(p + 1) + "].HorizontalComponent = " + str((cyclesOfSessions[p] / totalCycles) * math.cos(directionsOfSessions[p])))
+        print("G[" + str(p + 1) + "].VerticalComponent = " +
+              str((cyclesOfSessions[p] / totalCycles) * math.sin(directionsOfSessions[p])))
+        print("G[" + str(p + 1) + "].HorizontalComponent = " +
+              str((cyclesOfSessions[p] / totalCycles) * math.cos(directionsOfSessions[p])))
         verticalComponents += ((cyclesOfSessions[p]/totalCycles) * math.sin(directionsOfSessions[p]))
         horizontalComponents += ((cyclesOfSessions[p] / totalCycles) * math.cos(directionsOfSessions[p]))
     print("VerticalComponents = " + str(verticalComponents))
     print("HorizontalComponents = " + str(horizontalComponents))
     NetForce = math.sqrt((verticalComponents**2) + (horizontalComponents**2))
+    if horizontalComponents == 0:
+        print("Error: The horizontal components count should not equal 0, "
+              "hence, this variable is now adjusted to be '1'")
+        horizontalComponents = 1
     NetAngle = math.atan(verticalComponents/horizontalComponents)
     print("\n-------------------------------------------------------------------------------------------"
           "\n*******************************************************************************************"
-          "\nNet Produced Force = " + str("%.2f" % (NetForce * 100)) + "%\nDirection of the Net Force (radian) = " + str("%.2f" % NetAngle) + " " + sympy.pretty(pi) +
+          "\nNet Produced Force = " + str("%.2f" % (NetForce * 100)) + "%\nDirection of the Net Force (radian) = "
+          + str("%.2f" % NetAngle) + " " + sympy.pretty(pi) +
           "\n********************************************************************************************"
           "\n--------------------------------------------------------------------------------------------")
 else:
     print("Error: S should be bigger than ’0’.")
-
