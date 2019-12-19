@@ -1,0 +1,95 @@
+import sympy
+from sympy.abc import pi
+import math
+
+NetForce = 0
+NetAngle = 0
+verticalComponents = 0
+horizontalComponents = 0
+hoursDifference = 0
+minutesDifference = 0
+startHours = 0
+startMinutes = 0
+endHours = 0
+endMinutes = 0
+
+
+s = int(input("Enter the number of sessions: "))
+if s > 0:
+    cyclesOfSessions = list()
+    directionsOfSessions = list()
+    timesOfSessions = list()
+    distancesOfSessions = list()
+    anglesOfSessions = list()
+    totalCycles = 0
+    for i in range(0, s):
+        x = int(input("Enter the number of cycles in session number " + str(i+1) + ": \n "))
+        cyclesOfSessions.append(x)
+        totalCycles += cyclesOfSessions[i]
+    print("Total number of cycles per day = " + str(totalCycles))
+
+    for p in range(0, s):
+        startHours = int(input("Enter G[" + str(p+1) + "].start.hours: \n "))
+        if startHours < 0 or startHours > 24:
+            print("Error: The hour should be in the range 0-24")
+        else:
+            startMinutes = int(input("Enter G[" + str(p+1) + "].start.minutes: "))
+            if startMinutes < 0 or startMinutes > 60:
+                print("Error: The minutes should be in the range 00-60")
+            if startHours == 24:
+                startHours = 0
+            if startMinutes == 60:
+                startMinutes = 0
+                startHours += 1
+
+        endHours = int(input("Enter G[" + str(p+1) + "].end.hours: "))
+        if endHours < startHours:
+            print("Error: The ending hour should be more than the starting hour")
+        else:
+            if endHours < 0 or endHours > 24:
+                print("Error: The hour should be in the range 0-24")
+            else:
+                endMinutes = int(input("Enter G[" + str(p+1) + "].end.minutes: "))
+                if endMinutes < 0 or endMinutes > 60:
+                    print("Error: The minutes should be in the range 00-60")
+                if endHours == 24:
+                    endHours = 0
+                if endMinutes == 60:
+                    endMinutes = 0
+                    endHours += 1
+        hoursDifference = endHours - startHours
+        minutesDifference = endMinutes - startMinutes
+        print("The weight of edge E[" + str(p+1) + "," + str(s+1) + "] = " + str(cyclesOfSessions[p] / totalCycles))
+        timesOfSessions.append(hoursDifference * 3600 + minutesDifference * 60)
+        print("G[" + str(p+1) + "].time = " + str(timesOfSessions[p]) + " seconds")
+        distancesOfSessions.append((hoursDifference * 3600 + minutesDifference * 60) * 465.1)
+        print("G[" + str(p+1) + "].distance = " + str(distancesOfSessions[p]) + " meters")
+        anglesOfSessions.append(math.degrees((((hoursDifference * 3600 + minutesDifference * 60) * 465.1) /6371000)/2))
+        print("G[" + str(p+1) + "].angle = " + str(anglesOfSessions[p]))
+
+        startBearing = (startHours * 60 + startMinutes) * 0.25
+        endBearing = (endHours * 60 + endMinutes) * 0.25
+        print("start bearing for this session is : " + str(startBearing))
+        print("end Bearing for this session is : " + str(endBearing))
+
+        if endBearing < startBearing:
+            directionsOfSessions.append(math.radians(startBearing+(360-abs(endBearing-startBearing)/2)))
+        else:
+            directionsOfSessions.append(math.radians(startBearing+((endBearing-startBearing)/2)))
+        print("The Bearing of session number " + str(p + 1) + " is " + str(directionsOfSessions[p]) + " rad")
+        print("G[" + str(p + 1) + "].VerticalComponent = " + str((cyclesOfSessions[p] / totalCycles) * math.sin(directionsOfSessions[p])))
+        print("G[" + str(p + 1) + "].HorizontalComponent = " + str((cyclesOfSessions[p] / totalCycles) * math.cos(directionsOfSessions[p])))
+        verticalComponents += ((cyclesOfSessions[p]/totalCycles) * math.sin(directionsOfSessions[p]))
+        horizontalComponents += ((cyclesOfSessions[p] / totalCycles) * math.cos(directionsOfSessions[p]))
+    print("VerticalComponents = " + str(verticalComponents))
+    print("HorizontalComponents = " + str(horizontalComponents))
+    NetForce = math.sqrt((verticalComponents**2) + (horizontalComponents**2))
+    NetAngle = math.atan(verticalComponents/horizontalComponents)
+    print("\n-------------------------------------------------------------------------------------------"
+          "\n*******************************************************************************************"
+          "\nNet Produced Force = " + str("%.2f" % (NetForce * 100)) + "%\nDirection of the Net Force (radian) = " + str("%.2f" % NetAngle) + " " + sympy.pretty(pi) +
+          "\n********************************************************************************************"
+          "\n--------------------------------------------------------------------------------------------")
+else:
+    print("Error: S should be bigger than ’0’.")
+
