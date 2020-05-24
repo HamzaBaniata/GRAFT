@@ -8,3 +8,5 @@ This code is a part of a research paper published in Sensors journal on 29 March
 DOI: 10.3390/s20071894
 
 Article Link: https://www.mdpi.com/1424-8220/20/7/1894
+
+license: (CC BY) 
